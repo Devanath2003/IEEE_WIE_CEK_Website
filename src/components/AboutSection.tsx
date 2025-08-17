@@ -12,6 +12,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Particles from "./Particles";
 
+import collegeImage from "../images/college.jpg"; // ✅ imported properly
+
 gsap.registerPlugin(ScrollTrigger);
 
 /* -------------------------
@@ -65,10 +67,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
         ? scrollContainerRef.current
         : window;
 
-    // Use gsap.context so triggers made here are cleaned up without
-    // touching triggers from other components.
     const ctx = gsap.context(() => {
-      // gentle un-tilt of the entire heading
       gsap.fromTo(
         el,
         { transformOrigin: "0% 50%", rotate: baseRotation },
@@ -87,7 +86,6 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
 
       const wordElements = el.querySelectorAll<HTMLElement>(".word");
 
-      // opacity reveal per word
       gsap.fromTo(
         wordElements,
         { opacity: baseOpacity, willChange: "opacity" },
@@ -105,7 +103,6 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
         }
       );
 
-      // optional blur -> sharp per word
       if (enableBlur) {
         gsap.fromTo(
           wordElements,
@@ -299,9 +296,6 @@ const AboutSection = () => {
           <ScrollReveal
             containerClassName="font-heading font-bold text-foreground mb-4"
             textClassName="text-4xl md:text-5xl"
-            // You can tweak these if needed:
-            // rotationEnd="center center"
-            // wordAnimationEnd="center center"
           >
             About Us
           </ScrollReveal>
@@ -343,7 +337,7 @@ const AboutSection = () => {
           {/* Image with Tilt Effect + Floating Title */}
           <div className="flex justify-center">
             <TiltedCard
-              imageSrc="/src/images/college.jpg"
+              imageSrc={collegeImage}  // ✅ fixed: imported image used
               altText="IEEE WIE Community Image"
               captionText="IEEE WIE - College Chapter"
               rotateAmplitude={12}

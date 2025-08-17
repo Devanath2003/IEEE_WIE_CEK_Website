@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import wieLogo from "../images/wie_logo.png"; // ✅ Import image properly
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +22,7 @@ const Navigation = () => {
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <img
-              src="/src/images/wie_logo.png"
+              src={wieLogo}
               alt="IEEE WIE Logo"
               className="w-10 h-10 object-contain"
             />

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, createElement, ElementType } from "react";
 import { gsap } from "gsap";
 import { Button } from "@/components/ui/button";
 import Particles from "./Particles";
-
+import wieLogo from "../images/wie_logo.png";
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -265,7 +265,7 @@ const HeroSection = () => {
         {/* Logo */}
         <div className="mb-8 flex justify-center">
           <img
-            src="/src/images/wie_logo.png"
+            src={wieLogo} // ✅ logo now in /public folder
             alt="IEEE WIE Logo"
             className="w-24 h-24 object-contain"
           />
