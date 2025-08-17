@@ -358,17 +358,19 @@ class Media {
     const x = this.plane.position.x;
     const H = this.viewport.width / 2;
 
-    if (this.bend === 0 || this.isMobile) {
-      // Disable bend effect on mobile for better performance and cleaner look
+    // Apply bend effect (reduced on mobile but still present)
+    if (this.bend === 0) {
       this.plane.position.y = 0;
       this.plane.rotation.z = 0;
     } else {
-      const B_abs = Math.abs(this.bend);
+      // Reduce bend intensity on mobile but keep the effect
+      const bendIntensity = this.isMobile ? this.bend * 0.3 : this.bend;
+      const B_abs = Math.abs(bendIntensity);
       const R = (H * H + B_abs * B_abs) / (2 * B_abs);
       const effectiveX = Math.min(Math.abs(x), H);
 
       const arc = R - Math.sqrt(R * R - effectiveX * effectiveX);
-      if (this.bend > 0) {
+      if (bendIntensity > 0) {
         this.plane.position.y = -arc;
         this.plane.rotation.z = -Math.sign(x) * Math.asin(effectiveX / R);
       } else {
@@ -380,11 +382,14 @@ class Media {
     this.speed = scroll.current - scroll.last;
     this.program.uniforms.uSpeed.value = this.speed;
 
-    // wrap-around checks
+    // Enhanced wrap-around checks for true circular effect
     const planeOffset = this.plane.scale.x / 2;
     const viewportOffset = this.viewport.width / 2;
-    this.isBefore = this.plane.position.x + planeOffset < -viewportOffset;
-    this.isAfter = this.plane.position.x - planeOffset > viewportOffset;
+    const bufferZone = this.isMobile ? this.plane.scale.x * 0.5 : this.plane.scale.x;
+    
+    this.isBefore = this.plane.position.x + planeOffset < -viewportOffset - bufferZone;
+    this.isAfter = this.plane.position.x - planeOffset > viewportOffset + bufferZone;
+    
     if (direction === "right" && this.isBefore) {
       this.extra -= this.widthTotal;
       this.isBefore = this.isAfter = false;
@@ -419,8 +424,8 @@ class Media {
 
     this.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
     
-    // Adjust padding for mobile to prevent overlap
-    this.padding = this.isMobile ? this.plane.scale.x * 0.3 : 2;
+    // Adjust padding for mobile to prevent overlap while maintaining circular flow
+    this.padding = this.isMobile ? this.plane.scale.x * 0.2 : 2;
     this.width = this.plane.scale.x + this.padding;
     this.widthTotal = this.width * this.length;
     this.x = this.width * this.index;
@@ -613,7 +618,9 @@ class App {
     if (!this.isDown) return;
     const x = "touches" in e ? e.touches[0].clientX : e.clientX;
     this.lastPointerX = x;
-    const distance = (this.startX - x) * (this.scrollSpeed * 0.025);
+    // Increase sensitivity for mobile swiping - make it require more strength
+    const sensitivity = this.isMobile ? 0.08 : 0.025;
+    const distance = (this.startX - x) * (this.scrollSpeed * sensitivity);
     this.scroll.target = (this.scroll.position ?? 0) + distance;
   }
 
@@ -692,8 +699,8 @@ class App {
   onWheel(e: Event) {
     const wheelEvent = e as WheelEvent;
     const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail;
-    // Reduce scroll speed on mobile for better control
-    const scrollMultiplier = this.isMobile ? 0.1 : 0.2;
+    // Adjust scroll speed for better control while maintaining circular effect
+    const scrollMultiplier = this.isMobile ? 0.15 : 0.2;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * scrollMultiplier;
     this.onCheckDebounce();
     // If scrolling while something is selected, keep the overlay tracking

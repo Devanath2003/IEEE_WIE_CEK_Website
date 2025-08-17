@@ -54,24 +54,28 @@ const AchievementsSection = () => {
     <section id="achievements" className="py-20 px-6 bg-background">
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-16">
-          <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Achievements
-          </h2>
-          <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6"></div>
-          <p className="font-body text-xl text-muted-foreground max-w-2xl mx-auto">
-            Celebrating our milestones and recognitions in empowering women in engineering
-          </p>
-        </div>
+      <h2 className="font-heading text-4xl md:text-5xl font-bold text-foreground mb-4">
+        Achievements
+      </h2>
+      <div className="w-24 h-1 bg-gradient-primary mx-auto rounded-full mb-6"></div>
+      <p className="font-body text-xl text-muted-foreground max-w-2xl mx-auto">
+        Celebrating our milestones and recognitions in empowering women in engineering
+      </p>
+      {/* New paragraph with reduced size and more top margin */}
+      <p className="font-body text-base text-muted-foreground max-w-2xl mx-auto opacity-70 mt-6">
+        Swipe left and click
+      </p>
+    </div>
 
         <div className="h-[600px] w-full">
           <CircularGallery
             items={achievements}
-            bend={isMobile ? 0 : 2} // Disable bend on mobile
+            bend={isMobile ? 1.5 : 2} // Reduced bend on mobile but still present
             textColor="#ffffff"
             borderRadius={0.02}
             font={isMobile ? "bold 16px Inter" : "bold 18px Inter"} // Smaller font on mobile
-            scrollSpeed={isMobile ? 1 : 1.5} // Slower scroll on mobile
-            scrollEase={isMobile ? 0.12 : 0.08} // Different easing for mobile
+            scrollSpeed={isMobile ? 2.5 : 1.5} // Higher scroll speed on mobile for more strength needed
+            scrollEase={isMobile ? 0.1 : 0.08} // Slightly faster easing on mobile
           />
         </div>
       </div>
