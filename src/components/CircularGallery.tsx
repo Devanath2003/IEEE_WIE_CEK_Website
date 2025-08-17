@@ -167,6 +167,7 @@ interface MediaProps {
   textColor: string;
   borderRadius?: number;
   font?: string;
+  isMobile: boolean;
 }
 
 class Media {
@@ -187,6 +188,7 @@ class Media {
   textColor: string;
   borderRadius: number;
   font?: string;
+  isMobile: boolean;
   program!: Program;
   plane!: Mesh;
   title!: Title;
@@ -223,6 +225,7 @@ class Media {
     textColor,
     borderRadius = 0,
     font,
+    isMobile,
   }: MediaProps) {
     this.geometry = geometry;
     this.gl = gl;
@@ -240,6 +243,7 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
+    this.isMobile = isMobile;
     this.createShader();
     this.createMesh();
     this.createTitle();
@@ -354,7 +358,8 @@ class Media {
     const x = this.plane.position.x;
     const H = this.viewport.width / 2;
 
-    if (this.bend === 0) {
+    if (this.bend === 0 || this.isMobile) {
+      // Disable bend effect on mobile for better performance and cleaner look
       this.plane.position.y = 0;
       this.plane.rotation.z = 0;
     } else {
@@ -413,7 +418,9 @@ class Media {
     this.baseScaleY = baseY;
 
     this.program.uniforms.uPlaneSizes.value = [this.plane.scale.x, this.plane.scale.y];
-    this.padding = 2;
+    
+    // Adjust padding for mobile to prevent overlap
+    this.padding = this.isMobile ? this.plane.scale.x * 0.3 : 2;
     this.width = this.plane.scale.x + this.padding;
     this.widthTotal = this.width * this.length;
     this.x = this.width * this.index;
@@ -459,6 +466,7 @@ class App {
   screen!: { width: number; height: number };
   viewport!: { width: number; height: number };
   raf: number = 0;
+  isMobile: boolean = false;
 
   // selection
   private selectedIndex: number | null = null;
@@ -503,6 +511,7 @@ class App {
     this.onItemMove = onItemMove;
     this.onItemDeselect = onItemDeselect;
 
+    this.checkMobile();
     this.createRenderer();
     this.createCamera();
     this.createScene();
@@ -511,6 +520,10 @@ class App {
     this.createMedias(items, bend, textColor, borderRadius, font);
     this.update();
     this.addEventListeners();
+  }
+
+  checkMobile() {
+    this.isMobile = window.innerWidth <= 768;
   }
 
   createRenderer() {
@@ -584,6 +597,7 @@ class App {
         textColor,
         borderRadius,
         font,
+        isMobile: this.isMobile,
       });
     });
   }
@@ -678,7 +692,9 @@ class App {
   onWheel(e: Event) {
     const wheelEvent = e as WheelEvent;
     const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail;
-    this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
+    // Reduce scroll speed on mobile for better control
+    const scrollMultiplier = this.isMobile ? 0.1 : 0.2;
+    this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * scrollMultiplier;
     this.onCheckDebounce();
     // If scrolling while something is selected, keep the overlay tracking
     if (this.selectedIndex !== null) {
@@ -697,6 +713,7 @@ class App {
   }
 
   onResize() {
+    this.checkMobile();
     this.screen = {
       width: this.container.clientWidth,
       height: this.container.clientHeight,
@@ -710,7 +727,10 @@ class App {
     const width = height * this.camera.aspect;
     this.viewport = { width, height };
     if (this.medias) {
-      this.medias.forEach((media) => media.onResize({ screen: this.screen, viewport: this.viewport }));
+      this.medias.forEach((media) => {
+        media.isMobile = this.isMobile;
+        media.onResize({ screen: this.screen, viewport: this.viewport });
+      });
     }
   }
 
@@ -826,6 +846,20 @@ export default function CircularGallery({
     data?: GalleryItem;
   }>({ visible: false, x: 0, y: 0 });
 
+  // Check if mobile
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   useEffect(() => {
     if (!containerRef.current) return;
     const container = containerRef.current;
@@ -868,14 +902,25 @@ export default function CircularGallery({
       {/* Floating info card */}
       {overlay.visible && overlay.data && (
         <div
-          className="absolute z-20 pointer-events-auto"
-          style={{
-            left: overlay.x,
-            top: overlay.y,
-            transform: "translate(-50%, -110%)",
-          }}
+          className={`absolute z-20 pointer-events-auto ${
+            isMobile ? 'left-4 right-4' : ''
+          }`}
+          style={
+            isMobile
+              ? {
+                  top: overlay.y,
+                  transform: "translateY(-110%)",
+                }
+              : {
+                  left: overlay.x,
+                  top: overlay.y,
+                  transform: "translate(-50%, -110%)",
+                }
+          }
         >
-          <div className="bg-background/90 backdrop-blur-md border border-white/10 shadow-xl rounded-2xl p-4 max-w-xs">
+          <div className={`bg-background/90 backdrop-blur-md border border-white/10 shadow-xl rounded-2xl p-4 ${
+            isMobile ? 'w-full max-w-none' : 'max-w-xs'
+          }`}>
             <div className="text-sm text-muted-foreground mb-1">
               {overlay.data.year ?? ""}
             </div>

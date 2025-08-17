@@ -1,8 +1,22 @@
 import CircularGallery from "./CircularGallery";
 import awardImage from "../images/award.jpg";
 import achivImage from "../images/achiv.jpg";
+import { useState, useEffect } from "react";
 
 const AchievementsSection = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const achievements = [
     {
       image: awardImage,
@@ -14,7 +28,7 @@ const AchievementsSection = () => {
       image: achivImage,
       text: "STAR Program Excellence Recognition",
       description: "Acknowledged for outstanding performance and dedication within the STAR program.",
-      year: 2024, // optional; remove if you don’t want to show
+      year: 2024,
     },
     {
       image: awardImage,
@@ -52,12 +66,12 @@ const AchievementsSection = () => {
         <div className="h-[600px] w-full">
           <CircularGallery
             items={achievements}
-            bend={2}
+            bend={isMobile ? 0 : 2} // Disable bend on mobile
             textColor="#ffffff"
             borderRadius={0.02}
-            font="bold 18px Inter"
-            scrollSpeed={1.5}
-            scrollEase={0.08}
+            font={isMobile ? "bold 16px Inter" : "bold 18px Inter"} // Smaller font on mobile
+            scrollSpeed={isMobile ? 1 : 1.5} // Slower scroll on mobile
+            scrollEase={isMobile ? 0.12 : 0.08} // Different easing for mobile
           />
         </div>
       </div>
