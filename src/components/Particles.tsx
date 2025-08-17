@@ -1,5 +1,7 @@
+"use client";
 import { useEffect, useRef } from "react";
 import { Renderer, Camera, Geometry, Program, Mesh } from "ogl";
+import useMobile from "@/hooks/use-mobile";
 
 const defaultColors = ["#9C27B0", "#E91E63", "#7A2E2E"];
 
@@ -76,6 +78,7 @@ const fragment = /* glsl */ `
 
 interface ParticlesProps {
   particleCount?: number;
+  mobileParticleCount?: number;
   particleSpread?: number;
   speed?: number;
   particleColors?: string[];
@@ -91,6 +94,7 @@ interface ParticlesProps {
 
 const Particles = ({
   particleCount = 200,
+  mobileParticleCount = 800, // Increased from 400 to 800 for more particles on mobile
   particleSpread = 10,
   speed = 0.1,
   particleColors,
@@ -105,10 +109,18 @@ const Particles = ({
 }: ParticlesProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
+  const isMobile = useMobile();
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
+    // Determine the number of particles based on the view
+    const count = isMobile ? mobileParticleCount : particleCount;
+    
+    // Adjust particle size for mobile - make them bigger on mobile
+    const adjustedBaseSize = isMobile ? particleBaseSize * 1.5 : particleBaseSize;
+    const adjustedSizeRandomness = isMobile ? sizeRandomness * 1.3 : sizeRandomness;
 
     const renderer = new Renderer({ depth: false, alpha: true });
     const gl = renderer.gl;
@@ -138,7 +150,6 @@ const Particles = ({
       container.addEventListener("mousemove", handleMouseMove);
     }
 
-    const count = particleCount;
     const positions = new Float32Array(count * 3);
     const randoms = new Float32Array(count * 4);
     const colors = new Float32Array(count * 3);
@@ -171,8 +182,8 @@ const Particles = ({
       uniforms: {
         uTime: { value: 0 },
         uSpread: { value: particleSpread },
-        uBaseSize: { value: particleBaseSize },
-        uSizeRandomness: { value: sizeRandomness },
+        uBaseSize: { value: adjustedBaseSize },
+        uSizeRandomness: { value: adjustedSizeRandomness },
         uAlphaParticles: { value: alphaParticles ? 1 : 0 },
       },
       transparent: true,
@@ -224,6 +235,7 @@ const Particles = ({
     };
   }, [
     particleCount,
+    mobileParticleCount,
     particleSpread,
     speed,
     moveParticlesOnHover,
@@ -233,6 +245,7 @@ const Particles = ({
     sizeRandomness,
     cameraDistance,
     disableRotation,
+    isMobile,
   ]);
 
   return (

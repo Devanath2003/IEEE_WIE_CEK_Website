@@ -4,7 +4,10 @@ import { useEffect, useRef, useState, createElement, ElementType } from "react";
 import { gsap } from "gsap";
 import { Button } from "@/components/ui/button";
 import Particles from "./Particles";
+import useMobile from "@/hooks/use-mobile";
 import wieLogo from "../images/wie_logo.png";
+import handObj from "../images/hand_obj.png";
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -216,6 +219,22 @@ const TextType = ({
 const HeroSection = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const subtitleRef = useRef<HTMLSpanElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Check if device is mobile on mount and window resize
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Listen for window resize
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const tl = gsap.timeline();
@@ -240,7 +259,7 @@ const HeroSection = () => {
       {/* Particle Background */}
       <div className="absolute inset-0 z-0">
         <Particles
-          particleCount={300}
+          particleCount={isMobile ? 400 : 300}
           particleSpread={15}
           speed={0.05}
           alphaParticles={true}
@@ -251,13 +270,30 @@ const HeroSection = () => {
         />
       </div>
 
-      {/* Spline Globe Background */}
-      <div className="absolute inset-0 z-10 opacity-80 flex justify-center md:justify-start">
-        <spline-viewer
-          url="https://prod.spline.design/o4dIBbUXgoUiHhGs/scene.splinecode"
-          className="w-full h-full transform -translate-x-15 md:translate-x-0"
-          style={{ width: "100%", height: "100%" }}
-        />
+      {/* Background - Conditional rendering based on device type */}
+<div className="absolute inset-0 z-10 opacity-80 flex justify-center md:justify-start">
+  {isMobile ? (
+    // Static image for mobile devices
+    <div className="w-full h-full flex items-start justify-center">
+      <img
+        src={handObj}
+        alt="Hand Object"
+        className="w-auto h-auto max-w-full max-h-full object-contain mt-20" // Added mt-10 class
+        style={{
+          filter: 'drop-shadow(0 0 20px rgba(43, 28, 89, 0.3))',
+          transform: 'scale(0.8)',
+          opacity: 0.5
+        }}
+      />
+    </div>
+        ) : (
+          // Spline viewer for desktop devices
+          <spline-viewer
+            url="https://prod.spline.design/o4dIBbUXgoUiHhGs/scene.splinecode"
+            className="w-full h-full transform -translate-x-15 md:translate-x-0"
+            style={{ width: "100%", height: "100%" }}
+          />
+        )}
       </div>
 
       {/* Content */}
@@ -265,7 +301,7 @@ const HeroSection = () => {
         {/* Logo */}
         <div className="mb-8 flex justify-center">
           <img
-            src={wieLogo} // ✅ logo now in /public folder
+            src={wieLogo}
             alt="IEEE WIE Logo"
             className="w-24 h-24 object-contain"
           />

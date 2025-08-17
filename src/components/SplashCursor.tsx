@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
+import useMobile from "@/hooks/use-mobile";
 
 interface ColorRGB {
   r: number;
@@ -69,10 +70,11 @@ export default function SplashCursor({
   TRANSPARENT = true
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isMobile = useMobile();
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || isMobile) return;
 
     let pointers: Pointer[] = [pointerPrototype()];
 
