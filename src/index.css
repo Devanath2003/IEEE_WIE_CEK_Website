@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* IEEE Dark Theme Color System */
+    --background: 0 0% 5.5%; /* #0E0E0E */
+    --foreground: 0 0% 98%;
+    
+    --surface: 0 0% 7%; /* #121212 */
+    --surface-elevated: 0 0% 10%;
+    
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 95%;
+    --card-glass: 0 0% 15% / 0.1;
+    
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 95%;
+    
+    /* IEEE Brand Colors */
+    --primary: 291 64% 42%; /* Deep Violet #9C27B0 */
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 291 64% 52%;
+    
+    --secondary: 0 47% 33%; /* Deep Plum #7A2E2E */
+    --secondary-foreground: 0 0% 95%;
+    
+    --accent: 340 82% 52%; /* Pink #E91E63 */
+    --accent-foreground: 0 0% 98%;
+    --accent-glow: 340 82% 62%;
+    
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 0 0% 20% / 0.2;
+    --input: 0 0% 20% / 0.3;
+    --ring: 291 64% 42%;
+    
+    --radius: 0.75rem;
+    
+    /* Glassmorphic Elements */
+    --glass-primary: 291 64% 42% / 0.1;
+    --glass-secondary: 0 47% 33% / 0.1;
+    --glass-border: 0 0% 100% / 0.1;
+    --glass-backdrop: blur(12px);
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--primary)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--surface)));
+    
+    /* Shadows & Effects */
+    --shadow-glass: 0 8px 32px hsl(var(--primary) / 0.1);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.3);
+    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.3);
+    
+    /* Typography Scale */
+    --font-heading: 'Lora', serif;
+    --font-nav: 'Karla', sans-serif;
+    --font-body: 'IBM Plex Serif', serif;
+    
+    /* Animation */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

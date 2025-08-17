@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IEEE WIE CEK - Student Branch Chapter</title>
+    <meta name="description" content="IEEE Student Branch CEK - Fostering innovation and excellence in electrical and electronics engineering" />
+    <meta name="author" content="IEEE SB CEK" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Karla:wght@300;400;500;600&family=IBM+Plex+Serif:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Spline Viewer -->
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.48/build/spline-viewer.js"></script>
+
+    <meta property="og:title" content="8a8b75f4-cd50-4516-a307-62c1ecda4ace" />
+    <meta property="og:description" content="Lovable Generated Project" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <link rel="icon" type="image/png" href="/src/images/wie_sym.png" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script> 
+const interval = setInterval(() => { 
+    const viewer = document.querySelector('spline-viewer'); 
+    if (viewer && viewer.shadowRoot) { 
+        const logo = viewer.shadowRoot.querySelector('#logo'); 
+        if (logo) { 
+            logo.remove(); // 💥 remove the logo element entirely 
+            console.log("Logo removed!"); 
+            clearInterval(interval); 
+        } 
+    } 
+}, 500); 
+</script>
+  </body>
+</html>
